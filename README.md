@@ -11,13 +11,7 @@
 
 ## Getting the code
 ```
-$>> mkdir dotnetcore-service-starter
-
-$>> git init
-
-$>> git remote add origin git@github.com:rami-vemula-tw/dotnetcore-service-starter.git
-
-$>> git pull origin master
+$>> git clone git@github.com:rami-vemula-tw/dotnetcore-service-starter.git
 
 $>> cd payment/
 
@@ -27,7 +21,7 @@ $>> dotnet build
 ```
 
 ## Executing migrations and running the app in Development environment
-- Migrations will run automatically when **ASPNETCORE_ENVIRONMENT** variable is set to **Development**. (in **LaunchSettings.json**) For production workloads, migrations should be deployed through CI/CD. 
+- Migrations will run automatically when **ASPNETCORE_ENVIRONMENT** variable is set to **Development** (in **LaunchSettings.json**). For production workloads, migrations should be deployed through CI/CD. 
 - Instructions for manual execution of migrations can be found at **ef-migrations file** in **Payment** folder.
 
 ```
