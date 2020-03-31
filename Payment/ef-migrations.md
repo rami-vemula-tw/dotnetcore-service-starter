@@ -86,4 +86,4 @@ namespace PaymentService.Migrations
 dotnet ef database update
 ```
 
-- **NOTE**: SQLScripts folder is masrked with **CopyToOutputDirectory** to true in **csproj** file.
+- **NOTE**: SQLScripts folder is marked with **CopyToOutputDirectory** to true in **csproj** file.
