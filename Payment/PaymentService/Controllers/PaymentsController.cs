@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PaymentService.Infrastructure.Contracts;
 using PaymentService.Model;
 
 namespace PaymentService.Controllers
@@ -12,9 +13,9 @@ namespace PaymentService.Controllers
     [Route("[controller]")]
     public class PaymentsController : ControllerBase
     {
-        private readonly ILogger<PaymentsController> _logger;
+        private readonly IApplicationLogger<PaymentsController> _logger;
 
-        public PaymentsController(ILogger<PaymentsController> logger)
+        public PaymentsController(IApplicationLogger<PaymentsController> logger)
         {
             _logger = logger;
         }
@@ -22,7 +23,10 @@ namespace PaymentService.Controllers
         [HttpGet]
         public IEnumerable<BankInfo> Get()
         {
-            _logger.LogInformation("Get Action");
+            _logger.LogInformation("This is information");
+            _logger.LogWarning("This is Warning");
+            _logger.LogException(new Exception("This is exception"));
+
             return new List<BankInfo>();
         }
     }

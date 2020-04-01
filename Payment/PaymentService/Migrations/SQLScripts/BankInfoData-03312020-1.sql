@@ -1,2 +1,0 @@
-INSERT INTO bank_info(bank_code, url) VALUES ('AXIS', 'http://localhost:8082/') on conflict (bank_code) do nothing;
-INSERT INTO bank_info(bank_code, url) VALUES ('HDFC', 'http://localhost:8082/') on conflict (bank_code) do nothing;
