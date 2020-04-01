@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using PaymentService.Model;
+using PaymentService.Data.Model;
 
 namespace PaymentService.Data
 {

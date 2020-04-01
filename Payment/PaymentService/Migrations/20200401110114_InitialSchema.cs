@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace PaymentService.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,12 @@ namespace PaymentService.Migrations
                 {
                     table.PrimaryKey("PK_bank_info", x => x.id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_bank_info_bank_code",
+                table: "bank_info",
+                column: "bank_code",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

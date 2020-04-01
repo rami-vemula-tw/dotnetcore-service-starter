@@ -18,7 +18,7 @@ namespace PaymentService.Migrations
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("PaymentService.Model.BankInfo", b =>
+            modelBuilder.Entity("PaymentService.Data.Model.BankInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

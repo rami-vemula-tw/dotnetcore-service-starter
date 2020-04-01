@@ -9,8 +9,8 @@ using PaymentService.Data;
 namespace PaymentService.Migrations
 {
     [DbContext(typeof(PaymentDbContext))]
-    [Migration("20200330120339_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200401110114_InitialSchema")]
+    partial class InitialSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace PaymentService.Migrations
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("PaymentService.Model.BankInfo", b =>
+            modelBuilder.Entity("PaymentService.Data.Model.BankInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,6 +37,9 @@ namespace PaymentService.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankCode")
+                        .IsUnique();
 
                     b.ToTable("bank_info");
                 });

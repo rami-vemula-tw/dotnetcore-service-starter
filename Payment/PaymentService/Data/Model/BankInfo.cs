@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentService.Model
+namespace PaymentService.Data.Model
 {
     [Table("bank_info")]
     public class BankInfo
