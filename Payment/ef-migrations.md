@@ -46,7 +46,7 @@ dotnet ef migrations add MigrationName
 dotnet ef database update
 ```
 
-## Data seeding through migrations
+## (OPTIONAL) Data seeding through migrations 
 - Create the data script in **SQLScripts** folder under **Migrations** folder (of PaymentService). The naming convention which is followed is `{TableName}Data-{mmddyyyy}-{index (order in the day)}`.
     - Take reference of `BankInfoData-03312020-1.sql`
 

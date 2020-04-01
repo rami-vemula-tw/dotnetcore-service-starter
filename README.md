@@ -27,3 +27,8 @@ $>> dotnet build
 ```
 $>> dotnet run
 ```
+
+## Setting up Seed Data
+- Do a **POST** to http://localhost:5000/api/bankinfo with following JSON `{ "bankCode": "HDFC", "url": "http://localhost:8082" }`
+- You should get a 201 response with following body `{ "id": 1, "bankCode": "HDFC", "url": "http://localhost:8082" }`
+- Do a **GET** to http://localhost:5000/api/bankinfo/1 with following JSON `{ "id": 1, "bankCode": "HDFC", "url": "http://localhost:8082" }`
