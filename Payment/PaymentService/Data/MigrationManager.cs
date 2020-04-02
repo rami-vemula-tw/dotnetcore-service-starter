@@ -27,11 +27,7 @@ namespace PaymentService.Data
                 try
                 {
                     logger.LogInformation("DB Migration Started.");
-
-                    Task.Run(async () => {
-                        await paymentContext.Database.MigrateAsync();
-                    });
-                    
+                    paymentContext.Database.Migrate();
                     logger.LogInformation("DB Migration Completed.");
                 }
                 catch (Exception ex)

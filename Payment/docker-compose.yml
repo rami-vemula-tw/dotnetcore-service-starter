@@ -1,0 +1,78 @@
+version: '3.7'
+
+services:
+    paymentservice:
+        container_name: ps_con
+        image: paymentservice:latest
+        build:
+            context: ./paymentservice
+            dockerfile: dockerfile
+        ports:
+            - "10001:8080"
+        environment: 
+            - ConnectionStrings__PaymentConnection=User ID =postgres;Password=admin123;Server=pg_con;Port=5432;Database=netpayments;
+        networks:
+            - paymentnetwork
+    postgres:
+        container_name: pg_con
+        image: postgres
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-postgres}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin123}
+            PGDATA: /data/postgres
+        volumes:
+            - postgres:/data/postgres
+        networks:
+            - paymentnetwork
+        restart: unless-stopped  
+    pgadmin:
+        container_name: pga_con
+        image: dpage/pgadmin4
+        ports:
+            - "${PGADMIN_PORT:-5050}:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+        volumes:
+            - pgadmin:/root/.pgadmin
+        networks:
+            - paymentnetwork
+        restart: unless-stopped
+    elasticsearch:
+        container_name: es_con
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+        ports:
+            - "9200:9200"
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        environment:
+            - xpack.monitoring.enabled=true
+            - xpack.watcher.enabled=false
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - discovery.type=single-node
+        networks:
+            - paymentnetwork
+        
+    kibana:
+        container_name: k_con
+        image: docker.elastic.co/kibana/kibana:7.6.1
+        ports:
+            - "5601:5601"
+        depends_on:
+            - elasticsearch
+        environment:
+            - ELASTICSEARCH_URL=http://localhost:9200
+        networks:
+            - paymentnetwork
+
+
+networks:
+    paymentnetwork:
+        driver: bridge
+    
+volumes:
+    postgres:
+    pgadmin:
+    elasticsearch-data:
