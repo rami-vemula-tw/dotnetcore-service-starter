@@ -15,18 +15,25 @@ namespace PaymentService.Controllers
     {
         private readonly IApplicationLogger<PaymentsController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IServerContext _serverContext;
 
-        public PaymentsController(IApplicationLogger<PaymentsController> logger, IConfiguration configuration)
+        public PaymentsController(IApplicationLogger<PaymentsController> logger, IConfiguration configuration, IServerContext serverContext)
         {
             _logger = logger;
             _configuration = configuration;
+            _serverContext = serverContext;
+
         }
 
         [HttpGet]
         public string Get()
         {
             _logger.LogInformation(_configuration.GetConnectionString("PaymentConnection"));
+            _logger.LogCritical(_configuration["ElasticConfiguration:Uri"]);
+            _logger.LogWarning(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
             return "This is Payment Service Up ad running";
         }
     }
+
+
 }

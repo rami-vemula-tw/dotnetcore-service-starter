@@ -13,12 +13,12 @@ namespace PaymentService.Infrastructure.Logging
 {
     public class ApplicationLogger<T> : IApplicationLogger<T> where T : class
     {
-        private readonly Microsoft.Extensions.Logging.ILogger<T> logger;
+        private readonly Microsoft.Extensions.Logging.ILogger<T> _logger;
         private readonly IServerContext serverContext;
         private readonly AppSettings appSettings;
         public ApplicationLogger(Microsoft.Extensions.Logging.ILogger<T> logger, IOptions<AppSettings> appSettings, IServerContext serverContext)
         {
-            this.logger = logger;
+            this._logger = logger;
             this.appSettings = appSettings.Value;
             this.serverContext = serverContext;
         }
@@ -30,12 +30,12 @@ namespace PaymentService.Infrastructure.Logging
 
         public void LogWarning(string message, Dictionary<string, object> attributes = null)
         {
-            Log(LogLevel.Information, message, attributes: attributes);
+            Log(LogLevel.Warning, message, attributes: attributes);
         }
 
         public void LogCritical(string message, Dictionary<string, object> attributes = null)
         {
-            Log(LogLevel.Information, message, attributes: attributes);
+            Log(LogLevel.Critical, message, attributes: attributes);
         }
 
         public void LogInformation(string message, Dictionary<string, object> attributes = null)
@@ -45,25 +45,24 @@ namespace PaymentService.Infrastructure.Logging
 
         private void Log(LogLevel logLevel, string message, Exception exception = null, Dictionary<string, object> attributes = null)
         {
-            var attrs = GetRequestInformation(attributes);
-            using (this.logger.BeginScope(attrs))
+            using (this._logger.BeginScope(GetRequestInformation(attributes)))
             {
                 switch (logLevel)
                 {
                     case LogLevel.Error:
-                        this.logger.LogError(exception, message, attrs);
+                        this._logger.LogError(exception, message);
                         break;
                     case LogLevel.Warning:
-                        this.logger.LogWarning(message, attrs);
+                        this._logger.LogWarning(message);
                         break;
                     case LogLevel.Critical:
-                        this.logger.LogCritical(message, attrs);
+                        this._logger.LogCritical(message);
                         break;
                     case LogLevel.Information:
-                        this.logger.LogInformation(message, attrs);
+                        this._logger.LogInformation(message);
                         break;
                     default:
-                        this.logger.LogInformation(message, attrs);
+                        this._logger.LogInformation(message);
                         break;
                 }
             }
@@ -74,15 +73,12 @@ namespace PaymentService.Infrastructure.Logging
             if (attributes == null)
                 attributes = new Dictionary<string, object>();
 
-            attributes.Add("EventId", Guid.NewGuid());
+            attributes.Add("ApplicationEventId", Guid.NewGuid());
             attributes.Add("CorrelationId", serverContext.CorrelationId);
             attributes.Add("ClientInfo", SerializeObject(serverContext.ClientContext));
-            attributes.Add("TypeName", typeof(T).Name);
-            attributes.Add("Timestamp", DateTime.UtcNow);
             attributes.Add("Source", this.appSettings.Source);
             return attributes;
         }
-
         private string SerializeObject(object o) => JsonSerializer.Serialize(o);
     }
 }

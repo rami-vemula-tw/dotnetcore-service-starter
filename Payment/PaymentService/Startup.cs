@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,18 +33,16 @@ namespace PaymentService
         }
 
         public IConfiguration Configuration { get; }
-         public IWebHostEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddLogging(config =>
-            {
-                config.ClearProviders();
-                config.AddConsole();
-                config.Services.AddApplicationInsightsTelemetry();
-            });
+            // services.AddLogging(config =>
+            // {
+            //     config.Services.AddApplicationInsightsTelemetry();
+            // });
 
             services.AddControllers();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
