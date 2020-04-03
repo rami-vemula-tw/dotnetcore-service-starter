@@ -57,7 +57,7 @@ $>> dotnet run
 
 # Other Key Concepts
 
-### Datastore (both schema and data) migration approach is discussed at  [Data and Schema migrations approach](Payment/Documentation/data-schema-migrations.md) document.
+#### Datastore (both schema and data) migration approach is discussed at  [Schema and Data migrations approach](Payment/Documentation/schema-data-migrations.md) document.
 
 ## Running the application using Docker ecosystem
 - Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md).
