@@ -11,6 +11,7 @@ using PaymentService.Data;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
+using Serilog.Sinks.Network;
 
 namespace PaymentService
 {
@@ -57,7 +58,9 @@ namespace PaymentService
                 .Enrich.WithMachineName()
                 .WriteTo.Debug()
                 .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
+                .WriteTo.TCPSink(configuration["LogstashConfiguration:Uri"])
+                //.WriteTo.Http(configuration["LogstashConfiguration:Uri"])
+                //.WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();

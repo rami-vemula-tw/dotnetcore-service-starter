@@ -12,6 +12,7 @@ services:
         environment: 
             - ConnectionStrings__PaymentConnection=User ID =postgres;Password=admin123;Server=pg_con;Port=5432;Database=netpayments;
             - ElasticConfiguration__Uri=http://elasticsearch:9200
+            - LogstashConfiguration__Uri=tcp://logstash:8080
         networks:
             - paymentnetwork
     postgres:
@@ -64,6 +65,19 @@ services:
             - elasticsearch
         environment:
             - ELASTICSEARCH_URL=http://localhost:9200
+        networks:
+            - paymentnetwork
+    logstash:
+        container_name: l_con
+        build:
+            context: logstash/
+        volumes:
+            - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+            - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+        ports:
+            - "8080:8080"
+        environment:
+            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
         networks:
             - paymentnetwork
 
