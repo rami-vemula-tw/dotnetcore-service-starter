@@ -57,13 +57,12 @@ $>> dotnet run
 
 # Other Key Concepts
 
-## Create and Run Migrations Manually (including data seed migrations)
-- Instructions for manual execution of migrations along with see data migrations can be found at [EF Migrations details](Payment/Documentation/ef-migrations.md).
+### Datastore (both schema and data) migration approach is discussed at  [Data and Schema migrations approach](Payment/Documentation/data-schema-migrations.md) document.
 
 ## Running the application using Docker ecosystem
 - Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md).
 
-## Structured Logging Practices (Implementation details to Azure Application Insights and ELK Stask) 
+## Structured Logging Practices (Implementation details to Azure Application Insights and ELK Stack) 
 - Detailed information about Structured Logging practices along with implementation details to Azure Application Insights and ELK Stask can be found at [Logging details](Payment/Documentation/Logging.md).
 
 
