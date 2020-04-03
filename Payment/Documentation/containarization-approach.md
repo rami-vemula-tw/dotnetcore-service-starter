@@ -1,11 +1,53 @@
 
+# Application Containarization Approach
+Following are the major areas where migrations play crucial role in development and deployment life cycle.
+1. Schema changes (specifically DDL statements like create/alter tables, indexes etc.) for both SQL/NoSQL environments.
+2. Stored procedures and functions
+3. Seed data (seeding master data like countries, zipcodes etc.)
+4. Data transformation because of schema changes (for example, rstructuring a table into multiple tables etc.)
+5. ETL Pipelines (migrating transactional data from on-prem to cloud etc.)
+
+**NOTE:** ETL Migratons (#5 in the above list) is out of scope of this Starter kit.
+
+The primary key factors which play a major role in selection of a migration strategy are as follows.
+1. System topology (polygot)
+2. Data store choices
+3. Deployment strategies
+
+In short, migrations strategies vary between different use cases. The migration strategy opted for an application which is dependent on NoSQL store cannot be leveraged for an application with a SQL backend.
+
+At a strategy level, migrations can be created using one of the below options.
+1. Dotnet EF Core migrations
+2. SQL Scripts containing Stored procedires, Functions etc.
+2. Generate SQL dacpac (or data dump for other data store types) through custom utilities from data files like CSV etc.
+
+
+## Migration Strategy Recommendations
+- It is highly recommended to opt for a migration strategy where human intervention factor is very minimal. 
+- It is advisable to create EF Core migrations for schema changes where structural modifications are required.
+- Stored procedures and functions should be written and versioned as SQL files. These scripts should always (whether changed or not) be executed in the deployment pipeline.
+- Generation of SQL dacpack (or data dumps for other data store types) from different data files like CSV, flat file etc., is recommended for seed data migrations.
+    - Custom utilities can be created with any choice of technology or language. These utilities can read the seed data from the data files, transform the data as per target data structure and finally create the data dump in a formatoly which can be deployed to the target.
+    - These data dump files should be versioned based on Release, Build and Date of creation.
+    - Deployment platforms should be capable of picking the data dumps and deploy them to targets through deployment pipelines.
+- SQL Scripts should be created by the developers whenever existing data store is changed (for example splitting a table into multiple tables based on Normalization forms).
+    - These scripts should be structured in folders based on Release, Build and Date of creation. So that they can be uniquely identified for incremental deployments between builds and releases.
+- Every migration should have `Up` and `Down` strategies to support commit and rollback scenarios.
+
+## Recommendations for deploying migrations
+- In development environment, automatic deployment of migrations should be configured on application start. This will ensure exceptions or misleading behaviours are caught at the time of development. 
+    - If migrations cannot be executd in app start (because of many reasons like heterogeneous application model), it is advised to create a bash/powershell script which will automate the process.
+    - This custom script should keep track of SQL Scripts and migrations it ran, so that it can always work with differential database updates.
+- For production workloads, migrations should be deployed through CI/CD pipeline. This will fecilitate error and hassle free deployments of distributed system where different applications are deployed to polygot environments. This will also helps in deploying the migrations to multiple regions.
+
+# Containarization of Payment Service using Docker platform
 - We are using Docker compose `3.7`, we should have Docker Engine `18.06.0+`. Find out docker version by using below command.
 ```
 $>> docker --version
 ```
 
 ## Docker compose for Payment Service
-- **docker-compose.yml** file can be found **Payment** folder.
+**docker-compose.yml** file can be found **Payment** folder.
 - Docker compose for payment service is structured with below services.
     - Payment Service (Dotnet Core WebAPI)
     - Postgres Database

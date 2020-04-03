@@ -1,5 +1,3 @@
-- [dotnet ef migrations documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
-
 # Datastore Migrations Approach
 Following are the major areas where migrations play crucial role in development and deployment life cycle.
 1. Schema changes (specifically DDL statements like create/alter tables, indexes etc.) for both SQL/NoSQL environments.
@@ -20,29 +18,39 @@ In short, migrations strategies vary between different use cases. The migration 
 At a strategy level, migrations can be created using one of the below options.
 1. Dotnet EF Core migrations
 2. SQL Scripts containing Stored procedires, Functions etc.
-2. Generate SQL dacpac (or data dump for other data store types) through custom utilities from data files like CSV etc.
+2. Generate SQL scripts through custom utilities from data files like CSV, flat files etc.
 
 
 ## Migration Strategy Recommendations
 - It is highly recommended to opt for a migration strategy where human intervention factor is very minimal. 
-- It is advisable to create EF Core migrations for schema changes where structural modifications are required.
-- Stored procedures and functions should be written and versioned as SQL files. These scripts should always (whether changed or not) be executed in the deployment pipeline.
-- Generation of SQL dacpack (or data dumps for other data store types) from different data files like CSV, flat file etc., is recommended for seed data migrations.
-    - Custom utilities can be created with any choice of technology or language. These utilities can read the seed data from the data files, transform the data as per target data structure and finally create the data dump in a formatoly which can be deployed to the target.
-    - These data dump files should be versioned based on Release, Build and Date of creation.
-    - Deployment platforms should be capable of picking the data dumps and deploy them to targets through deployment pipelines.
+- It is advisable to create EF Core migrations for schema changes where structural modifications needs to be deployed.
+    - Dotnet EF Tools can be leveraged to automate incremental deployments.
+- Stored procedures and functions should be written and versioned as SQL files. 
+    - EF Core custom migrations should be leveraged to deploy these SQL Files. 
+    - Whenever a SP or Function is changed, developer should create a custom migration and commit the migration to the source code repository. This way that migration can be deployed automatically through Dotnet EF Tools.
+- Generation of SQL scripts from data files like CSV, flat file etc., is recommended for seed data migrations.
+    - Custom utilities can be created with any choice of technology or language. These utilities can read the seed data from the data files, transform the data as per the target data structure and finally create the script file in a format which can be deployed to the target.
+    - These script files should be versioned based on Release, Build and Date of creation.
+    - Deployment platforms should be capable of picking up these scripts and deploy them to targets through deployment pipelines.
 - SQL Scripts should be created by the developers whenever existing data store is changed (for example splitting a table into multiple tables based on Normalization forms).
-    - These scripts should be structured in folders based on Release, Build and Date of creation. So that they can be uniquely identified for incremental deployments between builds and releases.
+    - EF Core custom migrations should be leveraged to deploy these SQL Files. This way that migration can be deployed automatically through Dotnet EF Tools.
 - Every migration should have `Up` and `Down` strategies to support commit and rollback scenarios.
 
 ## Recommendations for deploying migrations
-- In development environment, automatic deployment of migrations should be configured on application start. This will ensure exceptions or misleading behaviours are caught at the time of development. 
-    - If migrations cannot be executd in app start (because of many reasons like heterogeneous application model), it is advised to create a bash/powershell script which will automate the process.
-    - This custom script should keep track of SQL Scripts and migrations it ran, so that it can always work with differential database updates.
-- For production workloads, migrations should be deployed through CI/CD pipeline. This will fecilitate error and hassle free deployments of distributed system where different applications are deployed to polygot environments. This will also helps in deploying the migrations to multiple regions.
+- In development environment, automatic deployment of migrations should be configured on application start. This will ensure exceptions or misleading behaviours are caught as early as possible. 
+    - Automating of DB deployment on application start is possible with Dotnet EF Tools. 
+    - If migrations cannot be executed in app start (for example, running custom seed data scripts), it is advised to create a bash/powershell script which will automate the process.
+    - This custom script should keep track of SQL scripts it ran, so that it can always work with differential database updates.
+- For production workloads, migrations should be deployed through CI/CD pipeline through Dotnet EF Tools. 
+    - Custom tasks should be incorporated in the deployment pipeline to deploy the seed data scripts.
+    - This will fecilitate error and hassle free deployments of distributed system where different applications are deployed to polygot environments. 
+    - This will also helps in deploying the migrations to multiple regions.
 
 
 # Code Sample for EF Core Migrations 
+
+ [Dotnet ef migrations documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
+
 ## Setting up environment to create database migrations
 - Open the **Payment** folder in VS Code
 
@@ -130,6 +138,6 @@ namespace PaymentService.Migrations
 dotnet ef database update
 ```
 
-# Code Sample for SQL Scripts and Data dump Migrations 
+# Code Sample for SQL Script based Seed data Migrations 
 
 ## To be implemented (mostly covered in CI/CD section)

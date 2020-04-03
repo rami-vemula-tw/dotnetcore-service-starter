@@ -57,10 +57,9 @@ $>> dotnet run
 
 # Other Key Concepts
 
-#### Datastore (both schema and data) migration approach is discussed at  [Schema and Data migrations approach](Payment/Documentation/schema-data-migrations.md) document.
+#### Datastore (both schema and data) migration approach is discussed at [Schema and Data migrations approach](Payment/Documentation/schema-data-migrations.md) document.
 
-## Running the application using Docker ecosystem
-- Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md).
+#### Containarization approach is discussed using Docker platform at [Containarization Approach](Payment/Documentation/containarization-approach.md).
 
 ## Structured Logging Practices (Implementation details to Azure Application Insights and ELK Stack) 
 - Detailed information about Structured Logging practices along with implementation details to Azure Application Insights and ELK Stask can be found at [Logging details](Payment/Documentation/Logging.md).
