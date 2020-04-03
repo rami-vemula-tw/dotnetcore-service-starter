@@ -59,9 +59,9 @@ $>> dotnet run
 # Other Key Concepts
 
 ## Create and Run Migrations Manually (including data seed migrations)
-- Instructions for manual execution of migrations can be found at [EF Migrations](Payment/ef-migrations.md) file in **Payment** folder.
+- Instructions for manual execution of migrations can be found at [EF Migrations](Payment/Documentation/ef-migrations.md) file in **Payment** folder.
 
 ## Running the application using Docker ecosystem
-- Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/docker-compose.md) file in **Payment** folder.
+- Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md) file in **Payment** folder.
 
 
