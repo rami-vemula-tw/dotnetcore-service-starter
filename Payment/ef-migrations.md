@@ -3,7 +3,7 @@
 ## Setting up environment to create database migrations
 - Open the **Payment** folder in VS Code
 
-- Update the Postgres Connection in **appsettings.json** file under **PaymentService** folder.
+- Make sure the Postgres Connection in **appsettings.json** file under **PaymentService** folder is your connection.
 
 - Install **Dotnet EF Tools** by executing below command in **VS Code terminal** (under PaymentService).
 
@@ -47,10 +47,11 @@ dotnet ef database update
 ```
 
 ## (OPTIONAL) Data seeding through migrations 
-- Create the data script in **SQLScripts** folder under **Migrations** folder (of PaymentService). The naming convention which is followed is `{TableName}Data-{mmddyyyy}-{index (order in the day)}`.
-    - Take reference of `BankInfoData-03312020-1.sql`
+- Create the data script in **SQLScripts** folder under **Migrations** folder (of PaymentService). The naming convention which is followed is `{TableName}Data-{mmddyyyy}-{index (order in the day)}`. For example `BankInfoData-03312020-1.sql`
 
-- Create the migration as shown below.
+- **NOTE**: **SQLScripts** folder is marked with **CopyToOutputDirectory** to true in the **csproj** file.
+
+- Create the migration as shown below. It is not necessary to give SqlFileName as the name of the migration. 
 ```
 dotnet ef migrations add SqlFileName
 
@@ -85,5 +86,3 @@ namespace PaymentService.Migrations
 ```
 dotnet ef database update
 ```
-
-- **NOTE**: SQLScripts folder is marked with **CopyToOutputDirectory** to true in **csproj** file.

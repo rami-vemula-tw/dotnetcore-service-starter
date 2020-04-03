@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using PaymentService.Infrastructure.Contracts;
 
 namespace PaymentService.Controllers
@@ -15,23 +11,21 @@ namespace PaymentService.Controllers
     {
         private readonly IApplicationLogger<PaymentsController> _logger;
         private readonly IConfiguration _configuration;
-        private readonly IServerContext _serverContext;
 
-        public PaymentsController(IApplicationLogger<PaymentsController> logger, IConfiguration configuration, IServerContext serverContext)
+        public PaymentsController(IApplicationLogger<PaymentsController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
-            _serverContext = serverContext;
-
         }
 
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation(_configuration.GetConnectionString("PaymentConnection"));
-            _logger.LogCritical(_configuration["ElasticConfiguration:Uri"]);
-            _logger.LogWarning(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
-            return "This is Payment Service Up ad running";
+            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }");
+            _logger.LogCritical($"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
+            _logger.LogCritical($"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
+            _logger.LogWarning($"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
+            return "Payment Service Up ad running";
         }
     }
 

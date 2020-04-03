@@ -64,10 +64,6 @@ namespace PaymentService
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
-
-            Log.Information(environment);
-            Log.Information(configuration["ElasticConfiguration:Uri"]);
-            
         }
 
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string environment)
