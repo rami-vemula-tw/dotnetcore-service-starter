@@ -32,7 +32,6 @@ $>> dotnet build
 - Migrations will run automatically when **ASPNETCORE_ENVIRONMENT** variable is set to **Development** 
   - In **LaunchSettings.json**, while running using **dotnet run**. 
   - In **launch.json** (under **.vscode** folder), while running using **VS Code Debugger**. 
-- For production workloads, migrations should be deployed through CI/CD. 
 
 ```
 $>> dotnet run
@@ -59,9 +58,12 @@ $>> dotnet run
 # Other Key Concepts
 
 ## Create and Run Migrations Manually (including data seed migrations)
-- Instructions for manual execution of migrations can be found at [EF Migrations](Payment/Documentation/ef-migrations.md) file in **Payment** folder.
+- Instructions for manual execution of migrations along with see data migrations can be found at [EF Migrations details](Payment/Documentation/ef-migrations.md).
 
 ## Running the application using Docker ecosystem
-- Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md) file in **Payment** folder.
+- Payment Service is integrated with Docker Compose. Detailed instructions can be found at [Docker Compose](Payment/Documentation/docker-compose.md).
+
+## Structured Logging Practices (Implementation details to Azure Application Insights and ELK Stask) 
+- Detailed information about Structured Logging practices along with implementation details to Azure Application Insights and ELK Stask can be found at [Logging details](Payment/Documentation/Logging.md).
 
 

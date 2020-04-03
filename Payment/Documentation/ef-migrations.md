@@ -1,5 +1,21 @@
 - [dotnet ef migrations documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
 
+## Database Migrations Approach
+Data and Schema migrations can be created using one of the below options.
+1. EF Core migrations
+2. Custom SQL Scripts from data sources like CSV
+3. Hybrid (EF Core and SQL Scripts)
+
+The primary key factors which play a major role in selection of a migration option are as follows.
+1. Application topology
+2. Data store choice
+3. Deployment strategy
+
+- It is advisable to create EF Core migrations for schema and generate SQL scripts from different data sources using different tools.
+- Every migration should have `Up` and `Down` strategies to support commit and rollback scenarios.
+- In development environment, automatic deployment of migrations should be configured on application start. For production workloads, migrations should run throught CI/CD pipeline.
+
+
 ## Setting up environment to create database migrations
 - Open the **Payment** folder in VS Code
 
