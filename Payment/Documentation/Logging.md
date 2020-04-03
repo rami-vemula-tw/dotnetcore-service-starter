@@ -22,10 +22,10 @@
 Text logging is also called ‘printf debugging’ after the C printf() family of functions.
 The problem with text logging files is they are unstructured text data. This makes it hard to query them for any sort of useful information.
 
-Hence, as a best practice always use strucuted logging
+Hence, as a best practice always use strucuted logging.
 
 
-## Structured Logging
+## What is Structured Logging
 
 Structured logging can be thought of as a stream of key-value pairs for every event logged, instead of just the plain text line of conventional logging.
 
@@ -120,6 +120,76 @@ Structured logging can be thought of as a stream of key-value pairs for every ev
 
     ```
 
+## Create Application Logger to fecilitate Structured Logging
+- Create [IApplicationLogger.cs](../PaymentService/Infrastructure/Contracts/IApplicationLogger.cs) and [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) which will provide wrapper methods to perform following activities.
+  - Fetch the server and client context information and construct the logging `Attributes`.
+  - Log the data with specified `LogLevel` and `Attributes` using default methods of `Microsoft.Extensions.Logging`.
+  - IApplicationLogger is resolved with ApplicationLogger instance in Startup class.
+
+- Start logging using `IApplicationLogger` instance as shown below to achieve structured logging.
+```
+using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using PaymentService.Infrastructure.Contracts;
+
+namespace PaymentService.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PaymentsController : ControllerBase
+    {
+        private readonly IApplicationLogger<PaymentsController> _logger;
+        private readonly IConfiguration _configuration;
+
+        public PaymentsController(IApplicationLogger<PaymentsController> logger, IConfiguration configuration)
+        {
+            _logger = logger;
+            _configuration = configuration;
+        }
+
+        [HttpGet]
+        public string Get()
+        {
+            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }");
+            _logger.LogCritical($"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
+            _logger.LogCritical($"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
+            _logger.LogWarning($"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
+            return "Payment Service Up ad running";
+        }
+    }
+}
+
+```
+
+## Structured Logging with Azure Application Insights
+
+- Create an instance of Azure Application Insights using the Azure Portal.
+  - Get the `Instrumentation Key` from the Application Insights overview.
+- Create `ApplicationInsights` section in **appsettings.json** file under **PaymentService** folder as shown below.
+
+```
+  "ApplicationInsights": {
+    "InstrumentationKey": "4fa80d68-6bb8-4968-b43e-dfdc67fb18d0"
+  },
+```
+- Add `Microsoft.ApplicationInsights.AspNetCore` Nuget package to the **PaymentService.csproj** as shown below.
+
+```
+ <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
+ ```
+ - Run below command to restore the packages.
+ ```
+ $>> dotnet restore
+ ```
+ - Configure Application insights at ConfigureServices method of Startup.cs as shown below.
+ ```
+ services.AddLogging(config =>
+ {
+     config.Services.AddApplicationInsightsTelemetry();
+ });
+```
+- With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will not stream logs to Azure Application Insights.
 
 
 ## References
