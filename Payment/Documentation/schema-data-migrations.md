@@ -2,14 +2,14 @@
 Following are the major areas where migrations play crucial role in development and deployment life cycle.
 1. Schema changes (specifically DDL statements like create/alter tables, indexes etc.).
 2. Stored procedures and functions
-3. Seed data (seeding master data like countries, zipcodes etc.)
-4. Data transformation because of schema changes (for example, rstructuring a table into multiple tables etc.)
+3. Seed data (seeding master data like countries, zip codes etc.)
+4. Data transformation because of schema changes (for example, restructuring a table into multiple tables etc.)
 5. ETL Pipelines (migrating transactional data from on-prem to cloud etc.)
 
-**NOTE:** ETL Migratons (#5 in the above list) is out of scope of this Starter kit.
+**NOTE:** ETL Migrations (#5 in the above list) is out of scope of this Starter kit.
 
 The primary key factors which play a major role in selection of a migration strategy are as follows.
-1. System topology (polygot)
+1. System topology (polyglot)
 2. Datastore choices
 3. Deployment strategies
 
@@ -41,7 +41,7 @@ At a strategy level, migrations can be created using one of the below options.
     - Automating the DB deployment on application start is possible with Dotnet EF Tools. 
     - If migrations cannot be executed in app start (for example, running custom seed data scripts), it is advised to create a bash/powershell script which will automate the process.
     - This custom script should keep track of SQL scripts it ran, so that it can always work with differential database updates. 
-- For production workloads, migrations should be deployed through CI/CD pipeline through Dotnet EF Tools. This will fecilitate error and hassle free deployments of distributed system where different applications are deployed to polygot environments. 
+- For production workloads, migrations should be deployed through CI/CD pipeline through Dotnet EF Tools. This will facilitate error and hassle free deployments of distributed system where different applications are deployed to polyglot environments. 
     - Custom tasks should be incorporated in the deployment pipeline to deploy the seed data scripts.
     - This will also helps in deploying the migrations to multiple regions.
 
@@ -53,7 +53,7 @@ At a strategy level, migrations can be created using one of the below options.
 ## Custom Data Ingestion API
 - Custom data ingestion API should be developed to perform exclusive data management operations.
     - This API can be leveraged by Admin users to perform basic data management tasks.
-    - Custom applications can be developed using this API to expose data interfac for other internal applications.
+    - Custom applications can be developed using this API to expose data interface for other internal applications.
     - Security of this API should be planned ahead of implementation.
 
 # Code Sample for EF Core Migrations 
@@ -79,7 +79,7 @@ If you are using zsh, you can add it to your profile by running the following co
 
 cat << \EOF >> ~/.zprofile
 # Add .NET Core SDK tools
-export PATH="$PATH:/Users/your userna,e/.dotnet/tools"
+export PATH="$PATH:/Users/your username/.dotnet/tools"
 EOF
 And run zsh -l to make it available for current session.
 

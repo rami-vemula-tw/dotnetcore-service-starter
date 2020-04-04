@@ -1,44 +1,51 @@
 
-# Application Containarization Approach
-Following are the major areas where migrations play crucial role in development and deployment life cycle.
-1. Schema changes (specifically DDL statements like create/alter tables, indexes etc.) for both SQL/NoSQL environments.
-2. Stored procedures and functions
-3. Seed data (seeding master data like countries, zipcodes etc.)
-4. Data transformation because of schema changes (for example, rstructuring a table into multiple tables etc.)
-5. ETL Pipelines (migrating transactional data from on-prem to cloud etc.)
+# Containerization Approach
+Following are the major areas where containerization techniques play crucial role in development and deployment life cycle.
+1. System Modernization Process
+2. Polyglot Microservices Architectures
+3. Distributed Systems Design
+4. Cloud agnostic development and deployment strategies
 
-**NOTE:** ETL Migratons (#5 in the above list) is out of scope of this Starter kit.
+There are many built in advantages with a container platform like Docker. Few of the notable advantages are as follows. 
+1. Environment standardization
+2. Efficient resource consumption
+3. Highly scalable and resilient services
+4. Application isolation
+5. Consistency in Build and Release pipelines
+6. Effective Configuration
+7. Rapid Development
+8. Quick onboarding new technical team members
+9. Support for container orchestrators
 
-The primary key factors which play a major role in selection of a migration strategy are as follows.
-1. System topology (polygot)
-2. Data store choices
-3. Deployment strategies
+There are many other advantages where containerization concepts deliver value compared to the traditional development methodologies. We can get more advantages from containers when we are trying to achieve Non-functional requirements ([Quality Attributes](https://docs.microsoft.com/en-us/previous-versions/msp-n-p/ee658094%28v%3dpandp.10%29)). 
 
-In short, migrations strategies vary between different use cases. The migration strategy opted for an application which is dependent on NoSQL store cannot be leveraged for an application with a SQL backend.
+## Docker Recommendations
+- One should have proper understanding of Docker container topology to better plan the docker images for application (for example windows containers can only run on Windows machines, but linux containers can work on both Windows, Mac, Linux distros).
+    - There can be performance issues when developing applications using docker on local machines because of the VM abstraction through which docker gets the access to host kernel .
+    - Even though docker containers are light-weight compared with VMs, but they are less isolated with host OS and more prone to issues.
+- Do not complicate the application development with Docker containers unless it is truly required.
+    - If we are developing simple web application or API where we do not have critical integrations with different other applications, then containers can be an overkill.
+    - Docker helps debugging of large scale systems, but to debug a simple API, docker might be adding extra complexity.
+- Even though containers can be used to deliver stateful services with the help of volumes, it is recommended against to this development model in some cases.
+    - Avoid maintaining databases and data stores in containers. It is advised to subscribe to cloud vendors who provide data stores as services in different subscription models.
+    - In case of on-prem infrastructure, it still advisable to run databases on dedicated servers rather than in Docker containers. Hence reducing the complexity and pitfalls of loosing production data.
+- Avoid storing application data on the container. If the container goes down, data goes down.
+- Avoid manual configuration of services (like load balancers, security etc.) provided by Docker containers, offload this activity to orchestrators like Kubernetes.
+- It is recommended to create `Docker Compose` of multi application deployments instead of working with individual Docker files.
+    - Each application (typically a Docker compose service) should have its own Docker file. Docker compose should internally refer these docker files. 
+- `Dockerfile` best practices can be found at this [official documentation](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/). The most important best practice is to keep the size of the image smaller.
+    - Leverage build cache.
+    - Use Multi-stage builds.
+    - Run one application per container.
+    - Build smallest image possible.
+    - Tag images properly.
+    - Always use public images from authentic sources.
+    - Create Multi-Arch images (based on infrastructure choices).
 
-At a strategy level, migrations can be created using one of the below options.
-1. Dotnet EF Core migrations
-2. SQL Scripts containing Stored procedires, Functions etc.
-2. Generate SQL dacpac (or data dump for other data store types) through custom utilities from data files like CSV etc.
+
+## Recommendations for deploying Docker containers.
 
 
-## Migration Strategy Recommendations
-- It is highly recommended to opt for a migration strategy where human intervention factor is very minimal. 
-- It is advisable to create EF Core migrations for schema changes where structural modifications are required.
-- Stored procedures and functions should be written and versioned as SQL files. These scripts should always (whether changed or not) be executed in the deployment pipeline.
-- Generation of SQL dacpack (or data dumps for other data store types) from different data files like CSV, flat file etc., is recommended for seed data migrations.
-    - Custom utilities can be created with any choice of technology or language. These utilities can read the seed data from the data files, transform the data as per target data structure and finally create the data dump in a formatoly which can be deployed to the target.
-    - These data dump files should be versioned based on Release, Build and Date of creation.
-    - Deployment platforms should be capable of picking the data dumps and deploy them to targets through deployment pipelines.
-- SQL Scripts should be created by the developers whenever existing data store is changed (for example splitting a table into multiple tables based on Normalization forms).
-    - These scripts should be structured in folders based on Release, Build and Date of creation. So that they can be uniquely identified for incremental deployments between builds and releases.
-- Every migration should have `Up` and `Down` strategies to support commit and rollback scenarios.
-
-## Recommendations for deploying migrations
-- In development environment, automatic deployment of migrations should be configured on application start. This will ensure exceptions or misleading behaviours are caught at the time of development. 
-    - If migrations cannot be executd in app start (because of many reasons like heterogeneous application model), it is advised to create a bash/powershell script which will automate the process.
-    - This custom script should keep track of SQL Scripts and migrations it ran, so that it can always work with differential database updates.
-- For production workloads, migrations should be deployed through CI/CD pipeline. This will fecilitate error and hassle free deployments of distributed system where different applications are deployed to polygot environments. This will also helps in deploying the migrations to multiple regions.
 
 # Containarization of Payment Service using Docker platform
 - We are using Docker compose `3.7`, we should have Docker Engine `18.06.0+`. Find out docker version by using below command.
@@ -116,8 +123,11 @@ $>> docker-compose up -d --force-recreate --no-deps --build paymentservice
 - We should get a 201 response 
     - With following JSON `{ "id": 1, "bankCode": "HDFC", "url": "http://localhost:10002" }`
 
+# Deployment of Payment Service Docker Containers
 
-## Some useful Docker commands
+## To be implemented (mostly covered in CI/CD section)
+
+# Some useful Docker commands
 
 - Build a Docker images
 ```
