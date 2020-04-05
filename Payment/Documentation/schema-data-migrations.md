@@ -58,7 +58,7 @@ At a strategy level, migrations can be created using one of the below options.
 
 # Code Sample for EF Core Migrations 
 
- [Dotnet ef migrations documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
+ In this section, we will see how to use Dotnet EF Tools to create migrations for Schema changes and SQL Scripts (for Stored Procedures, Functions, custom scripts to change data). This official documentation can be found at [Dotnet ef migrations documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli).
 
 ## Setting up environment to create database migrations
 - Open the **Payment** folder in VS Code
@@ -106,7 +106,7 @@ While in **PaymentService** folder, migrations can be executed through below com
 dotnet ef database update
 ```
 
-## (OPTIONAL) Data seeding through Dotnet EF Tools Migrations 
+## Dotnet EF Tools Migrations for SQL Scripts
 - Create the data script in **SQLScripts** folder under **Migrations** folder (of PaymentService). The naming convention which is followed is `{TableName}Data-{mmddyyyy}-{index (order in the day)}`. For example `BankInfoData-03312020-1.sql`
 
 - **NOTE**: **SQLScripts** folder is marked with **CopyToOutputDirectory** to true in the **csproj** file.

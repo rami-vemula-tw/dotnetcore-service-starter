@@ -17,3 +17,4 @@ EXPOSE 8080
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "PaymentService.dll"]
+LABEL version="1.0" maintainer="rami.vemula@thoughtworks.com"

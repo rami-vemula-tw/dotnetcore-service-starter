@@ -59,7 +59,7 @@ $>> dotnet run
 
 #### Datastore (both schema and data) migration approach is discussed at [Schema and Data migrations approach](Payment/Documentation/schema-data-migrations.md) document.
 
-#### Containarization approach is discussed using Docker platform at [Containarization Approach](Payment/Documentation/containarization-approach.md).
+#### Containerization approach is discussed using Docker platform at [Containarization Approach](Payment/Documentation/containerization-approach.md).
 
 ## Structured Logging Practices (Implementation details to Azure Application Insights and ELK Stack) 
 - Detailed information about Structured Logging practices along with implementation details to Azure Application Insights and ELK Stask can be found at [Logging details](Payment/Documentation/Logging.md).
