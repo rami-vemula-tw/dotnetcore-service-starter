@@ -44,7 +44,7 @@ There are many other advantages where containerization concepts deliver value co
     - Always use public images from authentic sources.
     - Create Multi-Arch images (based on infrastructure choices).
     - Run the container with least privileged user.
-    - Use lables to specify metadata.
+    - Use labels to specify metadata.
     - Add .dockerignore file to ignore files from build context.
     - Leverage Docker enterprise features for additional protection
 
