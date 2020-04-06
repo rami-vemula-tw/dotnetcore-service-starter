@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+    paymentservice:
+        container_name: ps_con
+        image: paymentservice:latest
+        build:
+            context: ../paymentservice
+            dockerfile: dockerfile
+        ports:
+            - "10001:8080"
+        environment: 
+            - ConnectionStrings__PaymentConnection=${ConnectionStrings_PaymentConnection_VAL}
+            - ElasticConfiguration__Uri=${ElasticConfiguration_Uri_VAL}
+            - LogstashConfiguration__Uri=${LogstashConfiguration_Uri_VAL}
+            - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT_VAL}
+            - ASPNETCORE_URLS=${ASPNETCORE_URLS_VAL}
+        networks:
+            - paymentnetwork

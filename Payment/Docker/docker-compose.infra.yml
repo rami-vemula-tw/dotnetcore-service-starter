@@ -1,29 +1,15 @@
 version: '3.7'
 
 services:
-    paymentservice:
-        container_name: ps_con
-        image: paymentservice:latest
-        build:
-            context: ./paymentservice
-            dockerfile: dockerfile
-        ports:
-            - "10001:8080"
-        environment: 
-            - ConnectionStrings__PaymentConnection=User ID =postgres;Password=admin123;Server=pg_con;Port=5432;Database=netpayments;
-            - ElasticConfiguration__Uri=http://elasticsearch:9200
-            - LogstashConfiguration__Uri=tcp://logstash:8080
-        networks:
-            - paymentnetwork
     postgres:
         container_name: pg_con
         image: postgres
         ports:
             - "5432:5432"
         environment:
-            POSTGRES_USER: ${POSTGRES_USER:-postgres}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin123}
-            PGDATA: /data/postgres
+            - POSTGRES_USER=${POSTGRES_USER_VAL}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_VAL}
+            - PGDATA=/data/postgres
         volumes:
             - postgres:/data/postgres
         networks:
@@ -33,10 +19,10 @@ services:
         container_name: pga_con
         image: dpage/pgadmin4
         ports:
-            - "${PGADMIN_PORT:-5050}:80"
+            - "5050:80"
         environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL_VAL}
+            - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD_VAL}
         volumes:
             - pgadmin:/root/.pgadmin
         networks:
@@ -50,10 +36,10 @@ services:
         volumes:
             - elasticsearch-data:/usr/share/elasticsearch/data
         environment:
-            - xpack.monitoring.enabled=true
-            - xpack.watcher.enabled=false
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - discovery.type=single-node
+            - xpack.monitoring.enabled=${xpack_monitoring_enabled_VAL}
+            - xpack.watcher.enabled=${xpack_watcher_enabled_VAL}
+            - ES_JAVA_OPTS=${ES_JAVA_OPTS_VAL}
+            - discovery.type=${discovery_type_VAL}
         networks:
             - paymentnetwork      
     kibana:
@@ -64,7 +50,7 @@ services:
         depends_on:
             - elasticsearch
         environment:
-            - ELASTICSEARCH_URL=http://localhost:9200
+            - ELASTICSEARCH_URL=${ElasticConfiguration_Uri_VAL}
         networks:
             - paymentnetwork
     logstash:
@@ -77,14 +63,9 @@ services:
         ports:
             - "8080:8080"
         environment:
-            LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+            - LS_JAVA_OPTS=${LS_JAVA_OPTS_VAL}
         networks:
             - paymentnetwork
-
-
-networks:
-    paymentnetwork:
-        driver: bridge
     
 volumes:
     postgres:
