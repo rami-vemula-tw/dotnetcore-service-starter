@@ -55,7 +55,7 @@ There are many other advantages where containerization concepts deliver value co
 - Automate the process of signing the docker image using Docker Content Trust (DCT).
 - Protect against vulnerabilities by using tools such as [Snyk](https://snyk.io/) in the build pipeline to continuously scan and monitor for vulnerabilities that may exist across all of the Docker image layers that are in use.
 - Sensitive information (application secrets, SQL connection information, tokens etc.) should not be stored or mentioned in the docker compose or docker files.
-    - The Developer (local environment) Secrets should be configured in appsettings.Development.json file.
+    - The Developer (local environment) Secrets should be configured in `appsettings.Development.json` or in an `.env` file.
     - Production (or any higher environment) Secrets should be maintained at Key Vault like Azure Key Vault, Amazon Key Management Service, HashiCorp Vault etc. Both the Kay Vault and Application should be configured to have trust (or identity) through which application can read secrets which are provisioned in the vault.
     - The precedence of configuration is as follows. To give an example, the ConnectionString setting mentioned in appsettings.json file will be overridden by the same setting value which is mentioned in Key Vault.
         - appsettings.json
@@ -86,17 +86,23 @@ $>> docker --version
     - pgadmin
     - elasticsearch-data
 
-## Setting up Postgres Connection
-- The Postgres Connection can be found under **paymentservice** of docker compose file. Update the connection with your connection.
+## Setting up the ENV variables
+- The `.env` file is present in **Docker** directory under **Payment** folder.
+- Update the following settings to reflect your local development environment.
+    - ConnectionStrings_PaymentConnection_VAL
+    - PGADMIN_DEFAULT_PASSWORD_VAL
+    - POSTGRES_PASSWORD_VAL
 
 ## Running Docker compose
-- Navigate to **Payment** folder and execute below commands in terminal.
+- Navigate to **Docker** folder (under **Payment** folder) and execute below commands in terminal.
 ```
-$>> docker-compose build
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml -f docker-compose.app.yml build
 
-$>> docker-compose up
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml up -d
+
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d  
 ```
-- **NOTE:** docker-compose up can be executed in detached mode by appending the command with `-d` switch.  
+- **NOTE:** docker-compose is executed in detached mode when the command is executed with `-d` switch.  
 
 - To check all the containers are up and running, execute the below command.
 ```
@@ -116,7 +122,7 @@ c5015e12b4f5        dpage/pgadmin4                                        "/entr
 
 - **NOTE:** **Payment Service** container needs to be stopped and restarted after **Postgres** container is up and running. This step is required to run the migrations successfully on the postgres database.
 ```
-$>> docker-compose up -d --force-recreate --no-deps --build paymentservice 
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d --force-recreate --no-deps --build paymentservice
 ```
 
 ## Executing migrations and running the app in Development environment
@@ -198,8 +204,22 @@ $>> docker logs --follow containername
 $>> docker exec -it containerName /bin/bash
 ```
 
+- Build and run from multiple Docker compose files
+```
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml -f docker-compose.app.yml build
+
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml up -d
+
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d  
+```
+
 - Build and run a particular server in docker compose
 ```
 $>> docker-compose up -d --force-recreate --no-deps --build servicename
+```
+
+- Build and run a particular server in docker compose (multiple yml files)
+```
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d --force-recreate --no-deps --build paymentservice
 ```
 
