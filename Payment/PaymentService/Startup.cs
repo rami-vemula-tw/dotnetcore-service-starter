@@ -21,6 +21,7 @@ using PaymentService.Infrastructure.Logging;
 using PaymentService.Infrastructure.Middleware;
 using PaymentService.Services;
 using PaymentService.Services.Contracts;
+using Serilog;
 
 namespace PaymentService
 {
@@ -63,6 +64,10 @@ namespace PaymentService
 
             app.UseMiddleware<ServerContextMiddleware>();
             app.UseHttpsRedirection();
+
+             app.UseSerilogRequestLogging(options => 
+                options.EnrichDiagnosticContext = RequestLogHelper.EnrichFromRequestResponse
+            );
 
             app.UseRouting();
 

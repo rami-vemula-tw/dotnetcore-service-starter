@@ -192,6 +192,72 @@ namespace PaymentService.Controllers
 - With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will not stream logs to Azure Application Insights.
 
 
+## Request Response Logging using Serilog middleware
+The *UseSerilogRequestLogging()* extension method adds the Serilog RequestLoggingMiddleware to the ASP.NET pipeline. 
+
+```
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    
+    app.UseStaticFiles();
+
+    app.UseSerilogRequestLogging(); // <-- Add this line
+
+    app.UseRouting();
+
+    app.UseAuthorization();
+
+    app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+      });
+}
+
+```
+
+You can also call an overload to configure an instance of RequestLoggingOptions. This class has several properties that let you customise how the request logger generates the log statements
+Serilog.AspNetCore adds the interface IDiagnosticContext to the DI container as a singleton, so you can access it from any of your classes. You can then use it to attach additional properties to the request log message by calling Set(). 
+
+The static helper class below retrieves values from the current HttpContext and sets them if they're available.: 
+```
+ public static class RequestLogHelper 
+{
+    public static  void EnrichFromRequestResponse(IDiagnosticContext diagnosticContext, HttpContext httpContext)
+    {
+        var request = httpContext.Request;
+
+        // Set all the common properties available for every request
+        diagnosticContext.Set("Host", request.Host);
+        diagnosticContext.Set("Protocol", request.Protocol);
+        diagnosticContext.Set("Scheme", request.Scheme);
+
+        // Only set it if available. You're not sending sensitive data in a querystring right?!
+        if(request.QueryString.HasValue)
+        {
+            diagnosticContext.Set("QueryString", request.QueryString.Value);
+        }
+
+        // Set the content-type of the Response at this point
+        diagnosticContext.Set("ContentType", httpContext.Response.ContentType);
+
+
+        
+        // Retrieve the IEndpointFeature selected for the request
+        var endpoint = httpContext.GetEndpoint();
+        if (endpoint is object) // endpoint != null
+        {
+            diagnosticContext.Set("EndpointName", endpoint.DisplayName);
+        }
+    }
+}
+}
+
+```
+*NOTE*: ASP.NET core 3.1 does not allow the response content to be logged. Request.Body is a forward only stream that doesn't support seeking or reading the stream a second time and hence Response body cannot be logged using Serilog request middleware.
+
+Also, as a best practice, it is not recommended to log Response.Body due to performance considerations
+        
+
 ## References
 
 1. [Logging in .NET Core and ASP.NET Core](https://docs.microsoft.com/en-gb/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1
