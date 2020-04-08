@@ -76,7 +76,7 @@ namespace PaymentServiceTest
         private BankInfo GetTestBankInfo(int id)
         {
             var bankInfoList = GetTestBankInfo();
-            var result = bankInfoList.Find(input => input.Equals(id);
+            var result = bankInfoList.Find(input => input.Equals(id));
 
             return result;
         }
@@ -86,3 +86,4 @@ namespace PaymentServiceTest
 
     }
 }
+
