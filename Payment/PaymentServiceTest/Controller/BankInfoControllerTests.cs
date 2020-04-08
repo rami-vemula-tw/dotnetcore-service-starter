@@ -20,18 +20,18 @@ namespace PaymentServiceTest
 
             // Arrange
             var input = 1;
-            var mockLogger = new Mock<IApplicationLogger<BankInfoController>>(); 
+            var mockLogger = new Mock<IApplicationLogger<BankInfoController>>();
             var mockBankInfoService = new Mock<IBankInfoService>();
             var result = new Read.BankInfo()
-                {
-                    Id = 1,
-                    BankCode = "HDFC",
-                    Url = "www.hdfc.com"
-                };
+            {
+                Id = 1,
+                BankCode = "HDFC",
+                Url = "www.hdfc.com"
+            };
 
 
-             mockBankInfoService.Setup(svc => svc.GetBankInfoByIdAsync(input))
-                .Returns(Task.FromResult(result));
+            mockBankInfoService.Setup(svc => svc.GetBankInfoByIdAsync(input))
+               .Returns(Task.FromResult(result));
 
             var controller = new BankInfoController(mockLogger.Object, mockBankInfoService.Object);
 
@@ -41,54 +41,48 @@ namespace PaymentServiceTest
 
             //Assert
 
-          var bankInfoResult = Assert.IsType<ActionResult<Read.BankInfo>>(response);
-          Assert.Equal("HDFC", bankInfoResult.Value.BankCode);
+            var bankInfoResult = Assert.IsType<ActionResult<Read.BankInfo>>(response);
+            Assert.Equal("HDFC", bankInfoResult.Value.BankCode);
 
 
-            
-            
+
+
         }
 
-    private List<BankInfo> GetTestBankInfo()
-    {
-        var bankInfoList = new List<BankInfo>();
-        bankInfoList.Add(new BankInfo()
+        private List<BankInfo> GetTestBankInfo()
         {
-            Id = 1,
-            BankCode = "HDFC",
-            Url = "www.hdfc.com"
-        });
+            var bankInfoList = new List<BankInfo>();
+            bankInfoList.Add(new BankInfo()
+            {
+                Id = 1,
+                BankCode = "HDFC",
+                Url = "www.hdfc.com"
+            });
 
-        bankInfoList.Add(new BankInfo()
+            bankInfoList.Add(new BankInfo()
+            {
+                Id = 2,
+                BankCode = "ICICI",
+                Url = "www.icici.com"
+            });
+
+            return bankInfoList;
+
+
+
+        }
+
+
+        private BankInfo GetTestBankInfo(int id)
         {
-            Id = 2,
-            BankCode = "ICICI",
-            Url = "www.icici.com"
-        });
-        
+            var bankInfoList = GetTestBankInfo();
+            var result = bankInfoList.Find(input => input.Equals(id);
+
+            return result;
+        }
 
 
-        
-        return bankInfoList;
-   
-   
-   
+
+
     }
-    
-
-     private BankInfo GetTestBankInfo(int id)
-    {
-        var bankInfoList = GetTestBankInfo();
-        var result = bankInfoList.Find(input =>  input.Equals(id));
-        
-
-
-        
-        return result;
-    }
-   
-    
-    
-    
-    }
-}   
+}
