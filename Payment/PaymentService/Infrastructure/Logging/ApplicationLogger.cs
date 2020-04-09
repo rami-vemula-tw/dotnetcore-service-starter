@@ -23,29 +23,29 @@ namespace PaymentService.Infrastructure.Logging
             this.serverContext = serverContext;
         }
 
-        public void LogException(Exception ex, Dictionary<string, object> attributes = null)
+        public void LogException(Exception ex, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Error, ex.Message, ex, attributes);
+            Log(LogLevel.Error, ex.Message, ex, enrichedAttributes);
         }
 
-        public void LogWarning(string message, Dictionary<string, object> attributes = null)
+        public void LogWarning(string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Warning, message, attributes: attributes);
+            Log(LogLevel.Warning, message, enrichedAttributes: enrichedAttributes);
         }
 
-        public void LogCritical(string message, Dictionary<string, object> attributes = null)
+        public void LogCritical(string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Critical, message, attributes: attributes);
+            Log(LogLevel.Critical, message, enrichedAttributes: enrichedAttributes);
         }
 
-        public void LogInformation(string message, Dictionary<string, object> attributes = null)
+        public void LogInformation(string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Information, message, attributes: attributes);
+            Log(LogLevel.Information, message, enrichedAttributes: enrichedAttributes);
         }
 
-        private void Log(LogLevel logLevel, string message, Exception exception = null, Dictionary<string, object> attributes = null)
+        private void Log(LogLevel logLevel, string message, Exception exception = null, params (string Key, object Value)[] enrichedAttributes)
         {
-            using (this._logger.BeginScope(GetRequestInformation(attributes)))
+            using (this._logger.BeginScope(GetRequestInformation(enrichedAttributes)))
             {
                 switch (logLevel)
                 {
@@ -68,10 +68,12 @@ namespace PaymentService.Infrastructure.Logging
             }
         }
 
-        private Dictionary<string, object> GetRequestInformation(Dictionary<string, object> attributes)
+        private Dictionary<string, object> GetRequestInformation(params (string Key, object Value)[] enrichedAttributes)
         {
-            if (attributes == null)
-                attributes = new Dictionary<string, object>();
+            var attributes = new Dictionary<string, object>();
+            foreach (var enrichedAttribute in enrichedAttributes) {
+                attributes.Add(enrichedAttribute.Key, enrichedAttribute.Value);
+            }
 
             attributes.Add("ApplicationEventId", Guid.NewGuid());
             attributes.Add("CorrelationId", serverContext.CorrelationId);

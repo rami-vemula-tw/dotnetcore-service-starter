@@ -7,9 +7,9 @@ namespace PaymentService.Infrastructure.Contracts
 {
     public interface IApplicationLogger<T> where T : class
     {
-        void LogInformation(string message, Dictionary<string, object> attributes = null);
-        void LogException(Exception ex, Dictionary<string, object> attributes = null);
-        void LogWarning(string message, Dictionary<string, object> attributes = null);
-        void LogCritical(string message, Dictionary<string, object> attributes = null);
+        void LogInformation(string message, params (string Key, object Value)[] enrichedAttributes);
+        void LogException(Exception ex, params (string Key, object Value)[] enrichedAttributes);
+        void LogWarning(string message, params (string Key, object Value)[] enrichedAttributes);
+        void LogCritical(string message, params (string Key, object Value)[] enrichedAttributes);
     }
 }

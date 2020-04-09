@@ -21,7 +21,7 @@ namespace PaymentService.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }");
+            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }", ("Process", "Payment"), ("Data","123"));
             _logger.LogCritical($"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
             _logger.LogCritical($"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
             _logger.LogWarning($"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
