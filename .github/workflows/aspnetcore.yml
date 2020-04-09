@@ -54,7 +54,7 @@ jobs:
       - name: dotnet build and publish
         run: |
           dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
-          dotnet publish -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
+          dotnet publish ./Payment/PaymentService.sln -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
          
      # Deploy to docker.pkg.github.com
       
