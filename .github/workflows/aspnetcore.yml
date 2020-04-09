@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
     - name: Test
-      run: dotnet test ./Payment/PaymentService.sln  --no-restore --verbosity normal
+      run: dotnet test ./Payment/PaymentService.sln  --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
