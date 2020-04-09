@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using PaymentService.Data;
+using PaymentService.Infrastructure.Logging;
 using Serilog;
 using Serilog.Exceptions;
+using Serilog.Formatting.Compact;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.Network;
 
@@ -56,12 +54,12 @@ namespace PaymentService
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
                 .Enrich.WithMachineName()
-                .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.TCPSink(configuration["LogstashConfiguration:Uri"])
+                .Enrich.WithProperty("Environment", environment)
+                .Enrich.With(new SerilogPropertiesEnricher())
+                .WriteTo.Console(new CompactJsonFormatter())
+                .WriteTo.TCPSink(configuration["LogstashConfiguration:Uri"], textFormatter : new CompactJsonFormatter())
                 //.WriteTo.Http(configuration["LogstashConfiguration:Uri"])
                 //.WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
