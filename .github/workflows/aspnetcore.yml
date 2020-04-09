@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: paymentservice          # set this to your application's name
-  PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_PATH: './Release'           # set this to the path to your web app project, defaults to the repository root
   
 
 jobs:
@@ -29,4 +29,33 @@ jobs:
       run: dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
     - name: Test
       run: dotnet test ./Payment/PaymentService.sln  --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+
+
+   #   Push image to GitHub Packages.
+  push:
+    # Ensure test job passes before pushing image.
+    needs: build
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+
+      - name: Install dependencies
+        run: dotnet restore ./Payment/PaymentService.sln
+
+       # Run dotnet build and publish
+       - name: dotnet build and publish
+       run: |
+         dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
+         dotnet publish -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
+         
+     # Deploy to docker.pkg.github.com
       
