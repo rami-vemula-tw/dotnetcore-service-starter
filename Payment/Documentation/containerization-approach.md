@@ -65,16 +65,18 @@ There are many other advantages where containerization concepts deliver value co
 
 
 
-# Containarization of Payment Service using Docker platform
+# Containerization of Payment Service using Docker platform
 - We are using Docker compose `3.7`, we should have Docker Engine `18.06.0+`. Find out docker version by using below command.
 ```
 $>> docker --version
 ```
 
 ## Docker compose for Payment Service
-**docker-compose.yml** file can be found **Payment** folder.
+**docker-compose** files can be found **Docker** folder under **Payment** folder.
 - Docker compose for payment service is structured with below services.
-    - Payment Service (Dotnet Core WebAPI)
+    - Payment Service 
+        - Dotnet Core WebAPI with `dockerfile` within the project
+        - `.dockerignore` file is present to ignore certain files and folders from containerization.   
     - Postgres Database
     - PGAdmin
     - Logstash
@@ -92,6 +94,7 @@ $>> docker --version
     - ConnectionStrings_PaymentConnection_VAL
     - PGADMIN_DEFAULT_PASSWORD_VAL
     - POSTGRES_PASSWORD_VAL
+
 
 ## Running Docker compose
 - Navigate to **Docker** folder (under **Payment** folder) and execute below commands in terminal.
