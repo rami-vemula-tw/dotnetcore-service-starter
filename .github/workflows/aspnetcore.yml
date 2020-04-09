@@ -50,12 +50,11 @@ jobs:
 
       - name: Install dependencies
         run: dotnet restore ./Payment/PaymentService.sln
-
-       # Run dotnet build and publish
-       - name: dotnet build and publish
-          run: |
-            dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
-            dotnet publish -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
+       
+      - name: dotnet build and publish
+        run: |
+          dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
+          dotnet publish -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
          
      # Deploy to docker.pkg.github.com
       
