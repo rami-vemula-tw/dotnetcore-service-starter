@@ -35,7 +35,8 @@ Structured logging can be thought of as a stream of key-value pairs for every ev
 
     To add a provider in an app that uses Generic Host, call the provider's Add{provider name} extension method in Program.cs:
 
-    ```public static IHostBuilder CreateHostBuilder(string[] args) =>
+```
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
         .ConfigureLogging(logging =>
         {
@@ -46,7 +47,7 @@ Structured logging can be thought of as a stream of key-value pairs for every ev
         {
             webBuilder.UseStartup<Startup>();
         });
-        ```
+```
 
 2. #### Logging Events
     Logging events for an API call should  produce the trace shown below :
@@ -164,35 +165,43 @@ namespace PaymentService.Controllers
 
 # Structured Logging with Azure Application Insights
 
-- Create an instance of Azure Application Insights using the Azure Portal.
+Create an instance of Azure Application Insights using the Azure Portal.
   - Get the `Instrumentation Key` from the Application Insights overview.
-- Create `ApplicationInsights` section in **appsettings.json** file under **PaymentService** folder as shown below.
+
+Create `ApplicationInsights` section in **appsettings.json** file under **PaymentService** folder as shown below.
 
 ```
   "ApplicationInsights": {
     "InstrumentationKey": "4fa80d68-6bb8-4968-b43e-dfdc67fb18d0"
   },
 ```
-- Add `Microsoft.ApplicationInsights.AspNetCore` Nuget package to the **PaymentService.csproj** as shown below.
+
+Add `Microsoft.ApplicationInsights.AspNetCore` Nuget package to the **PaymentService.csproj** as shown below.
 
 ```
  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
  ```
- - Run below command to restore the packages.
+ 
+ Run below command to restore the packages.
+
  ```
  $>> dotnet restore
+
  ```
- - Configure Application insights at ConfigureServices method of Startup.cs as shown below.
+ Configure Application insights at ConfigureServices method of Startup.cs as shown below.
  ```
+
  services.AddLogging(config =>
  {
      config.Services.AddApplicationInsightsTelemetry();
  });
 ```
-- With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will now stream logs to Azure Application Insights.
+
+With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will now stream logs to Azure Application Insights.
+
 
 # Centralized Logging with ELK (Elastic Search, Logstash and Kibana)
-ELK Stack is primarily used to provide streamlined data Analytics and Insights from different sources. It also helps in diagnosing various system issues through different metrics and logs. The rick querying and analytical capabilities of ELK not only help identifying typical application issues, but also provide valuable insights on health of the system and its usage.
+ELK Stack is primarily used to provide streamlined data analytics and insights from different log and metric sources. It also helps in diagnosing various system issues through different metrics and logs. The rich querying and analytical capabilities of ELK not only help identifying typical application issues, but also provide valuable insights on health of the system and its usage.
 
 **Elasticsearch:** A powerful open-source search and analytics engine used for full-text search and for analyzing logs and metrics.
 
@@ -200,22 +209,22 @@ ELK Stack is primarily used to provide streamlined data Analytics and Insights f
 
 **Kibana:** An open-source visualization and exploration tool for reviewing logs and events.
 
-- ELK Stack is it is technology or platform agnostic and it is open source.
+- ELK Stack is technology and platform agnostic and it is open source.
 - We can leverage both cloud and on-prem infrastructure to configure and scale the ELK stack.
 - Integration with different types of protocols and log formats.
 - It is a very good option for systems where logs are unstructured, inconsistent, and inaccessible.
-- Support of tailored security practices.
-- Support for Indexes and Filters.
+- Support for security practices.
+- Support for Indexes and filters.
 
-It is always **recommended** to go for managed ELK stack from different cloud vendors instead of managing the ELK infrastructure by ourselves because sometimes it becomes overhead to manage and maintain complex infrastructure with right security and configuration policies.
+It is always **recommended** to go for managed ELK stack (probably from different cloud vendors) instead of managing the ELK infrastructure by ourselves because sometimes it becomes overhead to manage and maintain complex infrastructure with right security and configuration policies.
 
 ## Serilog Logging framework and Integration with ELK Stack
 - The ELK infrastructure is provisioned through `Docker Compose`, refer to  [Docker Compose Documentation](containerization-approach.md). 
 - The `docker-compose.network.yml` and `docker-compose.infra.yml` should be executed to create docker containers for ELK stack. 
-- The ELK configuration (endpoints information) is configured at `appsettings.json` file.
+- If Payment Service is running locally using `dotnet run`, the ELK configuration (endpoints information) is configured at `appsettings.json` file. Otherwise the necessary configuration is provided in `.env` file under `Docker` folder.
 
 **NOTE**: 
- - Serilog is going to use [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) (developed in previous section) for delivering structured logs. So all the classes in the application are still going to leverage [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) to write logs. 
+ - Serilog is going to use [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) (developed in previous section) for delivering structured logs. All the classes in the application are  going to leverage [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) to write logs. 
 
 Install the following Nuget packages (in PaymentService.csproj) to get Serilog integrated with Payment Service.
 
@@ -231,10 +240,10 @@ Install the following Nuget packages (in PaymentService.csproj) to get Serilog i
 ```
 
 Configure the Serilog ang Logger Configuration at [Program.cs](../PaymentService/Program.cs)
- - The configuration enriches the log information to load data from `LogContext, MachineName, EnvironmentName, ExceptionDetails`.
+ - The configuration enriches the log information to have information of `LogContext, MachineName, EnvironmentName, ExceptionDetails`.
  - We remove the unnecessary properties from being logged using `SerilogPropertiesEnricher` class.
  - The log outputs are configured to following streams.
-    - Console - which will write data to console window.
+    - Console - which will write logs to console window.
     - TCP Sink - which is configured to Logstash (and eventually make it to elastic search and Kibana analytics).
     - HTTP SinK - an alternative to TCP Sink which sends logs to Logstash.
     - ElasticSearch - which will directly write logs to Elastic Search through which analytics are visible in Kibana.
