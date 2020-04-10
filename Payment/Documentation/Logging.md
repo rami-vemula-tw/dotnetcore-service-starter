@@ -151,7 +151,7 @@ namespace PaymentService.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }");
+            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }", ("Process", "Payment"), ("Data","123"));
             _logger.LogCritical($"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
             _logger.LogCritical($"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
             _logger.LogWarning($"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
@@ -162,7 +162,7 @@ namespace PaymentService.Controllers
 
 ```
 
-## Structured Logging with Azure Application Insights
+# Structured Logging with Azure Application Insights
 
 - Create an instance of Azure Application Insights using the Azure Portal.
   - Get the `Instrumentation Key` from the Application Insights overview.
@@ -189,7 +189,62 @@ namespace PaymentService.Controllers
      config.Services.AddApplicationInsightsTelemetry();
  });
 ```
-- With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will not stream logs to Azure Application Insights.
+- With the above configuration, [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) instance will now stream logs to Azure Application Insights.
+
+# Centralized Logging with ELK (Elastic Search, Logstash and Kibana)
+ELK Stack is primarily used to provide streamlined data Analytics and Insights from different sources. It also helps in diagnosing various system issues through different metrics and logs. The rick querying and analytical capabilities of ELK not only help identifying typical application issues, but also provide valuable insights on health of the system and its usage.
+
+**Elasticsearch:** A powerful open-source search and analytics engine used for full-text search and for analyzing logs and metrics.
+
+**Logstash:** An open-source tool that ingests and transforms logs and events.
+
+**Kibana:** An open-source visualization and exploration tool for reviewing logs and events.
+
+- ELK Stack is it is technology or platform agnostic and it is open source.
+- We can leverage both cloud and on-prem infrastructure to configure and scale the ELK stack.
+- Integration with different types of protocols and log formats.
+- It is a very good option for systems where logs are unstructured, inconsistent, and inaccessible.
+- Support of tailored security practices.
+- Support for Indexes and Filters.
+
+It is always **recommended** to go for managed ELK stack from different cloud vendors instead of managing the ELK infrastructure by ourselves because sometimes it becomes overhead to manage and maintain complex infrastructure with right security and configuration policies.
+
+## Serilog Logging framework and Integration with ELK Stack
+- The ELK infrastructure is provisioned through `Docker Compose`, refer to  [Docker Compose Documentation](containerization-approach.md). 
+- The `docker-compose.network.yml` and `docker-compose.infra.yml` should be executed to create docker containers for ELK stack. 
+- The ELK configuration (endpoints information) is configured at `appsettings.json` file.
+
+**NOTE**: 
+ - Serilog is going to use [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) (developed in previous section) for delivering structured logs. So all the classes in the application are still going to leverage [ApplicationLogger.cs](../PaymentService/Infrastructure/Logging/ApplicationLogger.cs) to write logs. 
+
+Install the following Nuget packages (in PaymentService.csproj) to get Serilog integrated with Payment Service.
+
+```
+<PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+<PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
+<PackageReference Include="Serilog.Exceptions" Version="5.4.0" />
+<PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.0.1" />
+<PackageReference Include="Serilog.Sinks.Http" Version="4.2.1" />
+<PackageReference Include="Serilog.Sinks.Network" Version="2.0.2.68" />
+<PackageReference Include="Serilog.Sinks.Seq" Version="5.0.0-dev-00174" />
+```
+
+Configure the Serilog ang Logger Configuration at [Program.cs](../PaymentService/Program.cs)
+ - The configuration enriches the log information to load data from `LogContext, MachineName, EnvironmentName, ExceptionDetails`.
+ - We remove the unnecessary properties from being logged using `SerilogPropertiesEnricher` class.
+ - The log outputs are configured to following streams.
+    - Console - which will write data to console window.
+    - TCP Sink - which is configured to Logstash (and eventually make it to elastic search and Kibana analytics).
+    - HTTP SinK - an alternative to TCP Sink which sends logs to Logstash.
+    - ElasticSearch - which will directly write logs to Elastic Search through which analytics are visible in Kibana.
+  - `CompactJsonFormatter` is used to make sure the log output formatter is similar in all log outputs.
+
+Finally Serilog is configured using `UseSerilog` extension of the `IHostbuilder`. 
+
+**NOTE**: To use HTTP Sink through logstash, we need additional configuration.
+- we need to install `logstash-input-http` plugin on the logstash container. Uncomment the plugin installation step in the [Logstash dockerfile](../Docker/logstash/Dockerfile) and recreate the containers.
+- We need to configure the `input` configuration at logstash to `http` from `tcp` in [Logstash configuration file](../Docker/logstash/pipeline/logstash.conf).
 
 
 ## Request Response Logging using Serilog middleware
