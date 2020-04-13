@@ -9,7 +9,8 @@ on:
 
 env:
   IMAGE_NAME: paymentservice          # set this to your application's name
-  PACKAGE_PATH: './Release'           # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_PATH: './release'           # set this to the path to your web app project, defaults to the repository root
+  DOCKER_FILE: './Payment/dockerfile.release' # set this to the docker file
   
 
 jobs:
@@ -57,4 +58,36 @@ jobs:
           dotnet publish ./Payment/PaymentService.sln -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
          
      # Deploy to docker.pkg.github.com
+      - name: Build Docker Image
+        run: |
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+          docker build -f ${{ env.DOCKER_FILE }}  -t ${{ env.IMAGE_NAME }} .
+          
+      
+      - name: Log on to GitHub package registry 
+        run: |
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+          
+      - name: Push Docker Image
+          run: |
+            IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+            # Strip git ref prefix from version
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+            # Strip "v" prefix from tag name
+            [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+            
+            # Use Docker `latest` tag convention
+            [ "$VERSION" == "master" ] && VERSION=latest
+
+            echo IMAGE_ID=$IMAGE_ID
+            echo VERSION=$VERSION
+
+            docker tag image $IMAGE_ID:$VERSION
+            docker push $IMAGE_ID:$VERSION
+
+            
+          
+          
       
