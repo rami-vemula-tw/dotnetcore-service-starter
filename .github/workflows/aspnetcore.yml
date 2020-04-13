@@ -60,7 +60,6 @@ jobs:
      # Deploy to docker.pkg.github.com
       - name: Build Docker Image
         run: |
-          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
           docker build -f ${{ env.DOCKER_FILE }}  -t ${{ env.IMAGE_NAME }} .
           
       
