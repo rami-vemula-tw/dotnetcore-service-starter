@@ -82,30 +82,33 @@ $>> docker --version
     - Logstash
     - Elastic Search
     - Kibana
+    - Vault
 - All the services are integrated on the same network bridge - paymentnetwork.
 - Following volumes are used by respective services.
-    - postgres
-    - pgadmin
-    - elasticsearch-data
-
-## Setting up the ENV variables
-- The `.env` file is present in **Docker** directory under **Payment** folder.
-- Update the following settings to reflect your local development environment.
-    - ConnectionStrings_PaymentConnection_VAL
-    - PGADMIN_DEFAULT_PASSWORD_VAL
-    - POSTGRES_PASSWORD_VAL
+    - postgres-vol
+    - pgadmin-vol
+    - elasticsearch-vol
+    - vault-vol
 
 
 ## Running Docker compose
-- Navigate to **Docker** folder (under **Payment** folder) and execute below commands in terminal.
+Navigate to **Docker** folder (under **Payment** folder) and execute below commands in terminal.
+
+### Setup the Infrastructure
 ```
 $>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml -f docker-compose.app.yml build
 
 $>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml up -d
-
-$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d  
 ```
 - **NOTE:** docker-compose is executed in detached mode when the command is executed with `-d` switch.  
+
+### Once infrastructure in ready, set up the Configuration by following [Configuration Documentation](external-configuration.md).
+
+
+### Setup the Payment application
+```
+$>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d  
+```
 
 - To check all the containers are up and running, execute the below command.
 ```
@@ -115,12 +118,13 @@ $>> docker ps -a
 - Output would be like following table showing all containers and their current status.
 ```
 CONTAINER ID        IMAGE                                                 COMMAND                  CREATED             STATUS              PORTS                                        NAMES
-c50c13f3b3f7        paymentservice:latest                                 "dotnet PaymentServi…"   3 hours ago         Up 3 hours          0.0.0.0:10001->8080/tcp                      ps_con
-e1b21eb8494b        payment_logstash                                      "/usr/local/bin/dock…"   4 hours ago         Up 3 hours          5044/tcp, 9600/tcp, 0.0.0.0:8080->8080/tcp   l_con
-f3713bb619db        docker.elastic.co/kibana/kibana:7.6.1                 "/usr/local/bin/dumb…"   25 hours ago        Up 4 hours          0.0.0.0:5601->5601/tcp                       k_con
-9947c812a3e9        docker.elastic.co/elasticsearch/elasticsearch:7.6.1   "/usr/local/bin/dock…"   25 hours ago        Up 4 hours          0.0.0.0:9200->9200/tcp, 9300/tcp             es_con
-c5015e12b4f5        dpage/pgadmin4                                        "/entrypoint.sh"         27 hours ago        Up 4 hours          443/tcp, 0.0.0.0:5050->80/tcp                pga_con
-948835ee9817        postgres                                              "docker-entrypoint.s…"   27 hours ago        Up 4 hours          0.0.0.0:5432->5432/tcp                       pg_con
+d44104b6cf0a        paymentservice:latest                                 "dotnet PaymentServi…"   12 minutes ago      Up 12 minutes       0.0.0.0:10001->8080/tcp                      ps_con
+b29557cc90e6        vault                                                 "vault server -confi…"   13 minutes ago      Up 13 minutes       0.0.0.0:8200->8200/tcp                       v_con
+5feb9a571a87        docker.elastic.co/kibana/kibana:7.6.1                 "/usr/local/bin/dumb…"   45 hours ago        Up 45 hours         0.0.0.0:5601->5601/tcp                       k_con
+ea37caab0fdf        postgres                                              "docker-entrypoint.s…"   45 hours ago        Up 45 hours         0.0.0.0:5432->5432/tcp                       pg_con
+1f4b4f30c297        docker.elastic.co/elasticsearch/elasticsearch:7.6.1   "/usr/local/bin/dock…"   45 hours ago        Up 45 hours         0.0.0.0:9200->9200/tcp, 9300/tcp             es_con
+694d73166bbc        dpage/pgadmin4                                        "/entrypoint.sh"         45 hours ago        Up 45 hours         443/tcp, 0.0.0.0:5050->80/tcp                pga_con
+00724c1ab231        docker_logstash                                       "/usr/local/bin/dock…"   45 hours ago        Up 45 hours         5044/tcp, 9600/tcp, 0.0.0.0:8080->8080/tcp   l_con
 ```
 
 - **NOTE:** **Payment Service** container needs to be stopped and restarted after **Postgres** container is up and running. This step is required to run the migrations successfully on the postgres database.
@@ -225,4 +229,13 @@ $>> docker-compose up -d --force-recreate --no-deps --build servicename
 ```
 $>> docker-compose -f docker-compose.network.yml -f docker-compose.app.yml up -d --force-recreate --no-deps --build paymentservice
 ```
+- List all Docker volume
+```
+$>> docker volume ls
+```
+- Remove a Docker volume
+```
+$>> docker volume rm volume-name
+```
+
 
