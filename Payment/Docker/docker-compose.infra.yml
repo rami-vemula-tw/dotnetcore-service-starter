@@ -11,7 +11,7 @@ services:
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_VAL}
             - PGDATA=/data/postgres
         volumes:
-            - postgres:/data/postgres
+            - postgres-vol:/data/postgres
         networks:
             - paymentnetwork
         restart: unless-stopped  
@@ -24,7 +24,7 @@ services:
             - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL_VAL}
             - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD_VAL}
         volumes:
-            - pgadmin:/root/.pgadmingit 
+            - pgadmin-vol:/root/.pgadmingit 
         networks:
             - paymentnetwork
         restart: unless-stopped
@@ -34,7 +34,7 @@ services:
         ports:
             - "9200:9200"
         volumes:
-            - elasticsearch-data:/usr/share/elasticsearch/data
+            - elasticsearch-vol:/usr/share/elasticsearch/data
         environment:
             - xpack.monitoring.enabled=${xpack_monitoring_enabled_VAL}
             - xpack.watcher.enabled=${xpack_watcher_enabled_VAL}
@@ -57,16 +57,33 @@ services:
         container_name: l_con
         build:
             context: logstash/
+        ports:
+            - "8080:8080"
         volumes:
             - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
             - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-        ports:
-            - "8080:8080"
         environment:
             - LS_JAVA_OPTS=${LS_JAVA_OPTS_VAL}
         networks:
             - paymentnetwork
+    vault:
+        container_name: v_con
+        image: vault
+        ports:
+            - "8200:8200"
+        volumes:
+            - vault-vol:/vault/logs
+            - vault-vol:/vault/file
+            - ./vault/config:/vault/config
+        restart: always
+        cap_add:
+            - IPC_LOCK
+        entrypoint: 
+            vault server -config=/vault/config/vault.json
+        networks:
+            - paymentnetwork
 volumes:
-    postgres:
-    pgadmin:
-    elasticsearch-data:
+    postgres-vol:
+    pgadmin-vol:
+    elasticsearch-vol:
+    vault-vol:

@@ -12,8 +12,14 @@ services:
         environment: 
             - ConnectionStrings__PaymentConnection=${ConnectionStrings_PaymentConnection_VAL}
             - ElasticConfiguration__Uri=${ElasticConfiguration_Uri_VAL}
+            - ElasticConfiguration__Enabled=${ElasticConfiguration_Enabled_VAL}
             - LogstashConfiguration__Uri=${LogstashConfiguration_Uri_VAL}
+            - LogstashConfiguration__Enabled=${LogstashConfiguration_Enabled_VAL}
             - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT_VAL}
             - ASPNETCORE_URLS=${ASPNETCORE_URLS_VAL}
+            - Vault__URL=${Vault_URL_VAL}
+            - Vault__RoleId=${Vault_RoleId_VAL}
+            - Vault__SecretId=${Vault_SecretId_VAL}
+            - Vault__Enabled=${Vault_Enabled_VAL}
         networks:
             - paymentnetwork
