@@ -21,10 +21,11 @@ namespace PaymentService.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }", ("Process", "Payment"), ("Data","123"));
-            _logger.LogCritical($"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
-            _logger.LogCritical($"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
-            _logger.LogWarning($"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
+            _logger.LogException("PAYMENT_FAILURE", new Exception("Payment failed on purpose for logging test"), ("Process", "Payment"), ("Data","456"));
+            _logger.LogInformation("PAYMENT_DB", $"The payment database connection string : { _configuration.GetConnectionString("PaymentConnection") }", ("Process", "Payment"), ("Data","123"));
+            _logger.LogCritical("PAYMENT_ES",$"The Elastic Search Endpoint : { _configuration["ElasticConfiguration:Uri"] }");
+            _logger.LogCritical("PAYMENT_LS",$"The Logstash Endpoint : { _configuration["LogstashConfiguration:Uri"] }");
+            _logger.LogWarning("PAYMENT_ENV",$"The Current Environment : { Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") }");
             return "Payment Service Up ad running";
         }
     }
