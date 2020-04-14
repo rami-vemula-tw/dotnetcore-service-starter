@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: paymentservice          # set this to your application's name
-  PACKAGE_PATH: '/bin/release'           # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_PATH: 'bin/release'           # set this to the path to build artifact, defaults to the repository root
   DOCKER_FILE: './Payment/PaymentService/dockerfile.release' # set this to the docker file
   
 
@@ -30,6 +30,7 @@ jobs:
       run: dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
     - name: Test
       run: dotnet test ./Payment/PaymentService.sln  --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+    
 
 
    #   Push image to GitHub Packages.
@@ -56,22 +57,25 @@ jobs:
         run: |
           dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
           dotnet publish ./Payment/PaymentService.sln -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
-        working-directory: ${{ env.PACKAGE_PATH }}
-      
-      - name: make build artifact directory
-        run: |
-          mkdir -p ${{ env.PACKAGE_PATH }}
+    
 
-
-      - name: copy build dlls
+      - name: Upload build dlls
         uses: actions/upload-artifact@v1
         with:
           name: buildll
           path: ${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}
+
+
+      - name: Download file buildJar
+        uses: actions/download-artifact@v1
+        with:
+            name: buildll
          
      # Deploy to docker.pkg.github.com
       - name: Build Docker Image
         run: |
+          mkdir -p ${{ env.PACKAGE_PATH }}
+          mv buildll/${{ env.IMAGE_NAME }} ${{ env.PACKAGE_PATH }}
           docker build . --file ${{ env.DOCKER_FILE }}  -t ${{ env.IMAGE_NAME }}
           
       
