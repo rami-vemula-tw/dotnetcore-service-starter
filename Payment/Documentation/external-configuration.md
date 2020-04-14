@@ -37,9 +37,10 @@ Host.CreateDefaultBuilder(args)
 - Build a cascading configuration to ensure proper overriding of default values.
     - Cascading configuration helps in supporting multiple development topologies like containerization, local debugging etc.
 - Make sure proper conventions are followed while creating and resolving configuration.
-- Store non-secure and immutable configuration in configuration files like appsettings.json.
-- Always store confidential secrets, certificates and passwords in secure vault like Hashicorp vault.
-- Use centralized configuration server to store non-secure and environment specific configuration information like Spring Cloud Configuration.
+- Store non-secure and immutable configuration in configuration files like `appsettings.json`.
+- Environment specific configuration like ASP.NET Core specific variables should be configured in `.env` file.
+- Always store confidential secrets, certificates and passwords in secure `Vault` like Hashicorp vault.
+- Use centralized configuration server to store non-secure and environment specific configuration information like `Spring Cloud Configuration`.
     - Centralized configuration is very helpful in distributed application scenarios where changes to the configuration can be propagated without application downtime.
 - Always prefer Managed service providers like different cloud vendors to provide and support configuration infrastructure.
     - Manager services are reliable and resilient.
@@ -47,19 +48,16 @@ Host.CreateDefaultBuilder(args)
     - Protection using Managed service identities through service principals is a recommended approach.
 - Choosing different configuration providers like files, vault, environment variables and combination of providers should be dependent on the type and scale of the system.
     - Operations and maintenance of the applications plays crucial role in choosing configuration providers.
-
-
-
-
-
-
-running locally, docker, production
-convetions with : __
-
-
-
-
-
+- Following important points can be beneficial at different phases of software development.
+    - At the time of development, have all the general configuration defined in `appsettings.json` and environment variables defined in `launch.json` of VS Code.
+    - While testing Docker containers, still have all the general configuration defined in `appsettings.json` but the environment variables can be defined in `.env` file. 
+        - It is advisable to spin up a container for Vault to store the keys securely.
+        - But if the project is using any managed service (probably from cloud vendors) for vault, we can have those settings in `.env` file and continue testing in local.
+    - For higher environments, it is always advisable to use below options in precedence.
+        - `appsettings.json`
+        - `.env`
+        - `Spring Cloud Configuration`
+        - `Key Vault` 
 
 
 # Setting up the configuration through configuration files
