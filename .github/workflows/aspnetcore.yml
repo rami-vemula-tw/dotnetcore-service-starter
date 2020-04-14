@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: paymentservice          # set this to your application's name
-  PACKAGE_PATH: 'bin/release'           # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_PATH: '/bin/release'           # set this to the path to your web app project, defaults to the repository root
   DOCKER_FILE: './Payment/PaymentService/dockerfile.release' # set this to the docker file
   
 
@@ -56,6 +56,11 @@ jobs:
         run: |
           dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
           dotnet publish ./Payment/PaymentService.sln -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
+      
+      - name: make build artifact directory
+        run: |
+          mkdir -p ${{ env.PACKAGE_PATH }}
+
 
       - name: copy build dlls
         uses: actions/upload-artifact@v1
