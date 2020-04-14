@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: paymentservice          # set this to your application's name
-  PACKAGE_PATH: 'bin/release'           # set this to the path to your web app project, defaults to the repository root
+  PACKAGE_PATH: '/bin/release'           # set this to the path to your web app project, defaults to the repository root
   DOCKER_FILE: './Payment/PaymentService/dockerfile.release' # set this to the docker file
   
 
