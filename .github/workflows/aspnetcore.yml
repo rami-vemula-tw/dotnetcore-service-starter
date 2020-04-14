@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: buildll
-          path: ${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}
+          path: bin/release/paymentservice.dll
 
 
       - name: Download file buildJar
@@ -75,7 +75,7 @@ jobs:
       - name: Build Docker Image
         run: |
           mkdir -p ${{ env.PACKAGE_PATH }}
-          mv buildll/${{ env.IMAGE_NAME }} ${{ env.PACKAGE_PATH }}
+          mv buildll/paymentservice.dll ${{ env.PACKAGE_PATH }}
           docker build . --file ${{ env.DOCKER_FILE }}  -t ${{ env.IMAGE_NAME }}
           
       
