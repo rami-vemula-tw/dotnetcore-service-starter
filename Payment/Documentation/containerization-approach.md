@@ -94,6 +94,8 @@ $>> docker --version
 ## Running Docker compose
 Navigate to **Docker** folder (under **Payment** folder) and execute below commands in terminal.
 
+### Set up the Configuration for Infrastructure by following [Setting up the ENV variables for Infrastructure](external-configuration.md#Setting-up-the-ENV-variables-for-Infrastructure).
+
 ### Setup the Infrastructure
 ```
 $>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml -f docker-compose.app.yml build
@@ -102,7 +104,7 @@ $>> docker-compose -f docker-compose.network.yml -f docker-compose.infra.yml up 
 ```
 - **NOTE:** docker-compose is executed in detached mode when the command is executed with `-d` switch.  
 
-### Once infrastructure in ready, set up the Configuration by following [Configuration Documentation](external-configuration.md).
+### Once infrastructure in ready, Set up the Configuration for Payment Service Application by following [Setting up the ENV variables for Application](external-configuration.md#Setting-up-the-ENV-variables-for-Application).
 
 
 ### Setup the Payment application
