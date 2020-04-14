@@ -23,29 +23,29 @@ namespace PaymentService.Infrastructure.Logging
             this.serverContext = serverContext;
         }
 
-        public void LogException(Exception ex, params (string Key, object Value)[] enrichedAttributes)
+        public void LogException(string eventCode, Exception ex, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Error, ex.Message, ex, enrichedAttributes);
+            Log(eventCode, LogLevel.Error, ex.Message, ex, enrichedAttributes);
         }
 
-        public void LogWarning(string message, params (string Key, object Value)[] enrichedAttributes)
+        public void LogWarning(string eventCode, string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Warning, message, enrichedAttributes: enrichedAttributes);
+            Log(eventCode, LogLevel.Warning, message, enrichedAttributes: enrichedAttributes);
         }
 
-        public void LogCritical(string message, params (string Key, object Value)[] enrichedAttributes)
+        public void LogCritical(string eventCode, string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Critical, message, enrichedAttributes: enrichedAttributes);
+            Log(eventCode, LogLevel.Critical, message, enrichedAttributes: enrichedAttributes);
         }
 
-        public void LogInformation(string message, params (string Key, object Value)[] enrichedAttributes)
+        public void LogInformation(string eventCode, string message, params (string Key, object Value)[] enrichedAttributes)
         {
-            Log(LogLevel.Information, message, enrichedAttributes: enrichedAttributes);
+            Log(eventCode, LogLevel.Information, message, enrichedAttributes: enrichedAttributes);
         }
 
-        private void Log(LogLevel logLevel, string message, Exception exception = null, params (string Key, object Value)[] enrichedAttributes)
+        private void Log(string eventCode, LogLevel logLevel, string message, Exception exception = null, params (string Key, object Value)[] enrichedAttributes)
         {
-            using (this._logger.BeginScope(GetRequestInformation(enrichedAttributes)))
+            using (this._logger.BeginScope(GetRequestInformation(eventCode, enrichedAttributes)))
             {
                 switch (logLevel)
                 {
@@ -68,13 +68,14 @@ namespace PaymentService.Infrastructure.Logging
             }
         }
 
-        private Dictionary<string, object> GetRequestInformation(params (string Key, object Value)[] enrichedAttributes)
+        private Dictionary<string, object> GetRequestInformation(string eventCode, params (string Key, object Value)[] enrichedAttributes)
         {
             var attributes = new Dictionary<string, object>();
             foreach (var enrichedAttribute in enrichedAttributes) {
                 attributes.Add(enrichedAttribute.Key, enrichedAttribute.Value);
             }
 
+            attributes.Add("eventCode", eventCode);
             attributes.Add("ApplicationEventId", Guid.NewGuid());
             attributes.Add("CorrelationId", serverContext.CorrelationId);
             attributes.Add("ClientInfo", SerializeObject(serverContext.ClientContext));
