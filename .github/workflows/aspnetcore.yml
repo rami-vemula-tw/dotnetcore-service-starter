@@ -56,6 +56,11 @@ jobs:
         run: |
           dotnet build ./Payment/PaymentService.sln  --configuration Release --no-restore
           dotnet publish ./Payment/PaymentService.sln -c Release -o '${{ env.PACKAGE_PATH }}/${{ env.IMAGE_NAME }}' 
+      
+      - name: make build artifact directory
+        run: |
+          mkdir -p ${{ env.PACKAGE_PATH }}
+
 
       - name: copy build dlls
         uses: actions/upload-artifact@v1
