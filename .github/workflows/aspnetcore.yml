@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: buildll
-          path: PaymentService.dll
+          path: Payment/PaymentService/bin/Release/netcoreapp3.1/PaymentService.dll
 
 
       - name: Download build dlls
