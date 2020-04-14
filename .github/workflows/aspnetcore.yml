@@ -74,8 +74,8 @@ jobs:
      # Deploy to docker.pkg.github.com
       - name: Build Docker Image
         run: |
-          mkdir -p build/images
-          mv buildll/PaymentService.dll build/images
+          mkdir -p /bin/release/
+          mv buildll/PaymentService.dll /bin/release/
           docker build . --file ${{ env.DOCKER_FILE }}  -t ${{ env.IMAGE_NAME }}
           
       
